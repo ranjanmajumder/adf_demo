@@ -1,0 +1,125 @@
+{
+	"name": "multiple_email_pipeline",
+	"properties": {
+		"description": "Send email",
+		"activities": [
+			{
+				"name": "send_email",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "prepare email variable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"url": "https://prod-20.centralindia.logic.azure.com:443/workflows/d6ed9bc8b6ba4956ae13b27de80a9bc6/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=yWS9DGGv1-P6vG5kFag16c2UhJHfGKrjqOtKN3R9nFA",
+					"body": {
+						"value": "@variables('Login_app_body')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "prepare email variable",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Prepare subject",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Prepare body",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Login_app_body",
+					"value": {
+						"value": "{\n  \"email_recepient\":\"@{pipeline().parameters.email_recepient}\",\n  \"subject\":\"@{variables('Logic_app_subject')}\",\n  \"body\":\"@{variables('Logic app body')}\"\n}\n",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Prepare subject",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Logic_app_subject",
+					"value": {
+						"value": "All Table Injestion",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Prepare body",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Logic app body",
+					"value": {
+						"value": "Tables which are injested are listed follow:\n\n@{replace(string(pipeline().parameters.table_status),'\"','')}\n\n\n",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"table_status": {
+				"type": "array"
+			},
+			"email_recepient": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"Login_app_body": {
+				"type": "String"
+			},
+			"Logic_app_subject": {
+				"type": "String"
+			},
+			"Logic app body": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-09-27T00:38:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

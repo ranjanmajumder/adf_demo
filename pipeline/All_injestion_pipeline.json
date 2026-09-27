@@ -1,0 +1,176 @@
+{
+	"name": "All_injestion_pipeline",
+	"properties": {
+		"description": "Pipeline for all table injestion",
+		"activities": [
+			{
+				"name": "Injest all tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Fetch tables name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Fetch tables name').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Execute Pl injestion pipeline",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_DEMO_INJESTION",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"table_name": {
+										"value": "@item().table_name",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "store table failure",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "Execute Pl injestion pipeline",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "table_status",
+								"value": {
+									"value": "@{item().table_name}--failure",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "store table success",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "Execute Pl injestion pipeline",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "table_status",
+								"value": {
+									"value": "@{item().table_name}--success",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Fetch tables name",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select table_name from metadata.table_list;",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "datasetranjan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "dbo",
+							"table_name": "customers"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Send Consolidated Email",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Injest all tables",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "multiple_email_pipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Fail injestion",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Injest all tables",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": "The injestion has been failed",
+					"errorCode": "404"
+				}
+			}
+		],
+		"variables": {
+			"table_status": {
+				"type": "Array"
+			},
+			"email_recepient": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-09-27T06:11:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

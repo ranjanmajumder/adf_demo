@@ -1,0 +1,21 @@
+{
+	"name": "az-adt-ranjan",
+	"properties": {
+		"globalParameters": {
+			"email_recepient": {
+				"type": "string",
+				"value": "ranjanmajumder190@gmail.com"
+			}
+		},
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dc39b380-1ba9-49ba-b35d-7c75150cd5aa",
+		"tenantId": "80278d5e-2030-49a9-8373-4bbe445e08a2"
+	}
+}
