@@ -878,6 +878,7 @@
 				"activities": [
 					{
 						"name": "show_customer_table",
+						"description": "Show customer table here",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
