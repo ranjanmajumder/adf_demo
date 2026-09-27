@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "az-adt-ranjan"
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://demostorageranjan.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "az-server-ranjan.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "az-database-ranjan"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "ranjan"
+		},
+		"TGR_EVENT_SIMPLE_properties_PL_FILE_EVENT_parameters_file_name": {
+			"value": "@triggerBody().fileName"
+		},
+		"TGR_EVENT_SIMPLE_properties_typeProperties_scope": {
+			"value": "/subscriptions/5466d697-553c-4644-8548-caea7716ae5e/resourceGroups/az-demo-resource/providers/Microsoft.Storage/storageAccounts/demostorageranjan"
+		}
+	}
+}
