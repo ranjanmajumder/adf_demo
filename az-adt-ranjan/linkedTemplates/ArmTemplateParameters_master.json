@@ -5,9 +5,6 @@
 		"factoryName": {
 			"value": "az-adt-ranjan"
 		},
-		"AzureSqlDatabase1_password": {
-			"value": ""
-		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://demostorageranjan.dfs.core.windows.net/"
 		},
@@ -25,6 +22,9 @@
 		},
 		"TGR_EVENT_SIMPLE_properties_typeProperties_scope": {
 			"value": "/subscriptions/5466d697-553c-4644-8548-caea7716ae5e/resourceGroups/az-demo-resource/providers/Microsoft.Storage/storageAccounts/demostorageranjan"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://demo-ranjan.vault.azure.net/"
 		},
 		"containerUri": {
 			"value": ""
